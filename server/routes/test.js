@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { deneme } from '../controller/testController.js';
+import { deneme, post } from '../controller/testController.js';
 const route = Router();
 
 route.get('/', deneme);
+route.post('/post', post);
 
 export default route;

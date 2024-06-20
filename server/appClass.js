@@ -76,7 +76,7 @@ class AppClass {
   }
 
   async perms() {
-    const allowedOrigins = ['http://localhost:5173']; // İzin verilen origin adresleri
+    const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000']; // İzin verilen origin adresleri
     return allowedOrigins;
   }
 

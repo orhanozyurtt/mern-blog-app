@@ -50,6 +50,14 @@ class Response {
             'The request payload contains malformed JSON. Please check your input and try again.',
         },
       };
+    } else if (error.status === 429) {
+      return {
+        code: HTTP_CODES.TOO_MANY_REQUESTS,
+        error: {
+          message: 'Too many requests 429 kodu yakalndı ',
+          description: 'Too many requests',
+        },
+      };
     }
 
     /*

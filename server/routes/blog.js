@@ -24,6 +24,6 @@ route.post('/delete/:slug', protect, blogController.delete);
 
 // api/blog/detail
 // methot : get
-route.get('/detail', protect, blogController.detail);
+route.get('/detail/:slug', protect, blogController.detail);
 
 export default route;

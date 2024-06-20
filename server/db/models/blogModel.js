@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
+import Category from './categoryModel.js'; // Category modelini import edin
 
 const blogSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -8,6 +9,11 @@ const blogSchema = new mongoose.Schema({
   authorName: { type: String, required: true },
   tags: [{ type: String }],
   slug: { type: String, unique: true }, // Slug alanı eklendi
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  }, // Kategori referansı
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -19,6 +25,7 @@ blogSchema.pre('save', function (next) {
   this.slug = slugify(this.title, { lower: true });
   next();
 });
+
 const Blog = mongoose.model('Blog', blogSchema);
 
 export default Blog;

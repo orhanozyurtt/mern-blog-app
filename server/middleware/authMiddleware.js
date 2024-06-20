@@ -69,7 +69,7 @@ const admin = asyncHandler(async (req, res, next) => {
       next(); // İzin verilen kullanıcı ise bir sonraki middleware'e geç
     } else {
       throw new CustomError(
-        HTTP_CODES.FORBIDDEN,
+        HTTP_CODES.UNAUTHORIZED,
         'Authorization Error',
         'Admin permission required 1'
       ); // Admin yetkisi yoksa hata ile birlikte next() fonksiyonu çağrılır
@@ -80,4 +80,24 @@ const admin = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { protect, admin };
+const loginControl = asyncHandler(async (req, res, next) => {
+  let refreshToken = req.cookies.refreshToken;
+  try {
+    if (refreshToken) {
+      // Kullanıcı giriş yapmışsa, daha fazla işlem yapmadan hemen hata döndürün
+      throw new CustomError(
+        HTTP_CODES.CONFLICT,
+        'Already logged in',
+        'User is already logged in'
+      );
+    } else {
+      // Kullanıcı giriş yapmamışsa, devam edin
+      next();
+    }
+  } catch (error) {
+    const errorResponse = Response.errorResponse(error);
+    res.status(errorResponse.code).json(errorResponse);
+  }
+});
+
+export { protect, admin, loginControl };

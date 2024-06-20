@@ -3,6 +3,7 @@ import { HTTP_CODES } from '../config/Enum.js';
 import CustomError from '../lib/Error.js';
 import Response from '../lib/Response.js';
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcryptjs';
 // import { controller } from '../lib/InputController.js';
 import { generateToken, refreshToken } from '../lib/generateToken.js';
 
@@ -152,7 +153,7 @@ class UserController {
         generateToken(res, user._id, user.isAdmin);
         refreshToken(res, user._id, user.isAdmin);
         const userResponse = {
-          // _id: user._id,
+          id: user._id,
           name: user.name,
           email: user.email,
           // isAdmin: user.isAdmin,
@@ -163,7 +164,7 @@ class UserController {
             Response.successResponse(
               userResponse,
               'success login',
-              HTTP_CODES.CREATED
+              HTTP_CODES.OK
             )
           );
       } else {
@@ -190,8 +191,73 @@ class UserController {
     });
     res.status(200).json({ message: 'user logged out  ' });
   }
-  async test(req, res) {
-    res.json('welcome user panel');
+  async profile(req, res) {
+    let token = req.cookies.jwt;
+    let refreshToken = req.cookies.refreshToken;
+    if (token || refreshToken) {
+      const userInfo = req.user;
+      const userInfoList = {
+        name: userInfo.name,
+        email: userInfo.email,
+      };
+      res.json({ userInfo: userInfoList });
+    } else {
+      res.status(200).json({ message: 'user not logged in  ' });
+    }
+  }
+  async update(req, res) {
+    const { name, email, password } = req.body;
+    const newInfo = { name, email };
+
+    try {
+      const user = await User.findById(req.user._id);
+
+      if (!user) {
+        throw new CustomError(
+          HTTP_CODES.NOT_FOUND,
+          'User not found',
+          'User not found with the provided ID'
+        );
+      }
+
+      if (password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (isMatch) {
+          throw new CustomError(
+            HTTP_CODES.BAD_REQUEST,
+            'Same password',
+            'New password must be different from the current one'
+          );
+        }
+      }
+
+      // Update only if new password is different
+      if (password) {
+        newInfo.password = password; // Assuming password is already hashed in schema
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(req.user._id, newInfo, {
+        new: true,
+        runValidators: true,
+      });
+
+      generateToken(res, updatedUser._id, updatedUser.isAdmin);
+      refreshToken(res, updatedUser._id, updatedUser.isAdmin);
+
+      res
+        .status(HTTP_CODES.OK)
+        .json(
+          Response.successResponse(
+            updatedUser,
+            'User updated successfully',
+            HTTP_CODES.OK
+          )
+        );
+    } catch (error) {
+      const errorResponse = Response.errorResponse(error);
+      res.status(errorResponse.code).json(errorResponse);
+    }
   }
 }
 function generateEmailContent(verificationCode) {
