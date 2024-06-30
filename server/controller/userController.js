@@ -192,6 +192,7 @@ class UserController {
     res.status(200).json({ message: 'user logged out  ' });
   }
   async profile(req, res) {
+    console.log('istek atıldı');
     let token = req.cookies.jwt;
     let refreshToken = req.cookies.refreshToken;
     if (token || refreshToken) {

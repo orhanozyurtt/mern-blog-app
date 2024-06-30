@@ -1,6 +1,15 @@
 import React from 'react';
-const GlobalBlog: React.FC = () => {
-  return <div>Global list all blog</div>;
+
+// import BlogMain from '@/components/blog/test/BlogMain';
+// import BlogMain from '@/components/blog/test1/BlogMain';
+import BlogMain from '@/components/blog/test2/blogMain';
+
+const BlogMainPage = () => {
+  return (
+    <div>
+      <BlogMain />
+    </div>
+  );
 };
 
-export default GlobalBlog;
+export default BlogMainPage;

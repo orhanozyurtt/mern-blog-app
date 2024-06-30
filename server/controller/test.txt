@@ -22,12 +22,12 @@ const parseDate = (isoDateString) => {
 class BlogController {
   async globalListByCategory(req, res) {
     try {
-      const { categoryId, categoryName, page = 1, limit = 10 } = req.query;
+      const { categoryId, categoryName } = req.body;
 
       if (!categoryId && !categoryName) {
         throw new CustomError(
           HTTP_CODES.BAD_REQUEST,
-          'Please provide category id or category name',
+          'please choose category id or category name',
           'Either category id or name is required, but not both'
         );
       }
@@ -35,37 +35,23 @@ class BlogController {
       if (categoryId && categoryName) {
         throw new CustomError(
           HTTP_CODES.BAD_REQUEST,
-          'Please provide category id or category name',
+          'please choose category id or category name',
           'Either category id or name is required, but not both'
         );
       }
 
-      let category;
-      if (categoryId) {
-        category = await Category.findById(categoryId);
-      } else {
-        category = await Category.findOne({ name: categoryName });
-      }
+      const category = categoryId
+        ? await Category.findById(categoryId)
+        : await Category.findOne({ name: categoryName });
 
       if (!category) {
         throw new CustomError('Category not found', HTTP_CODES.NOT_FOUND);
       }
 
-      const totalCount = await Blog.countDocuments({
-        category: category._id,
-        isPublished: true,
-      });
-
-      const totalPages = Math.ceil(totalCount / limit);
-      const offset = (page - 1) * limit;
-
       const blogs = await Blog.find({
         category: category._id,
         isPublished: true,
-      })
-        .sort({ createdAt: -1 })
-        .skip(offset)
-        .limit(limit);
+      });
 
       const formattedBlogs = blogs.map((blog) => ({
         ...blog._doc,
@@ -80,17 +66,15 @@ class BlogController {
           : null,
       }));
 
-      res.status(HTTP_CODES.OK).json(
-        Response.successResponse(
-          formattedBlogs,
-          'List of blogs fetched successfully',
-          {
-            totalPages,
-            currentPage: page,
-            totalCount,
-          }
-        )
-      );
+      res
+        .status(HTTP_CODES.OK)
+        .json(
+          Response.successResponse(
+            formattedBlogs,
+            'List of blogs fetched successfully',
+            HTTP_CODES.OK
+          )
+        );
     } catch (error) {
       const errorResponse = Response.errorResponse(error);
       res.status(errorResponse.code).json(errorResponse);
@@ -99,18 +83,10 @@ class BlogController {
 
   async globalList(req, res) {
     try {
-      const { page = 1, limit = 10 } = req.query;
+      // Sadece yayınlanmış blogları bulun
+      const blogs = await Blog.find({ isPublished: true });
 
-      const totalCount = await Blog.countDocuments({ isPublished: true });
-
-      const totalPages = Math.ceil(totalCount / limit);
-      const offset = (page - 1) * limit;
-
-      const blogs = await Blog.find({ isPublished: true })
-        .sort({ createdAt: -1 })
-        .skip(offset)
-        .limit(limit);
-
+      // Tarih formatını güncelle
       const formattedBlogs = blogs.map((blog) => ({
         ...blog._doc,
         publishDate: blog.publishDate
@@ -124,23 +100,21 @@ class BlogController {
           : null,
       }));
 
-      res.status(HTTP_CODES.OK).json(
-        Response.successResponse(
-          formattedBlogs,
-          'List of blogs fetched successfully',
-          {
-            totalPages,
-            currentPage: page,
-            totalCount,
-          }
-        )
-      );
+      // Başarı yanıtı gönder
+      res
+        .status(HTTP_CODES.OK)
+        .json(
+          Response.successResponse(
+            formattedBlogs,
+            'List of blogs fetched successfully',
+            HTTP_CODES.OK
+          )
+        );
     } catch (error) {
       const errorResponse = Response.errorResponse(error);
       res.status(errorResponse.code).json(errorResponse);
     }
   }
-
   async categoryList(req, res) {
     try {
       const categories = await Category.find();

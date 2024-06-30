@@ -36,6 +36,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `${USERS_URL}/user/profile`,
         method: 'GET',
+        providesTags: () => ['User'],
       }),
     }),
   }),

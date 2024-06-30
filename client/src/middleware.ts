@@ -9,7 +9,8 @@ export function middleware(request: NextRequest) {
 
   // Eğer profile sayfasına gidiliyorsa ve jwt veya refreshToken çerezleri yoksa, ana sayfaya yönlendir
   if (url.pathname.startsWith('/profile')) {
-    if (!jwtToken || !refreshToken) {
+    if (!jwtToken && !refreshToken) {
+      request.cookies.clear();
       console.log(
         'Profile sayfasına erişim engellendi, jwt veya refreshToken çerezleri yok.'
       );
@@ -25,6 +26,7 @@ export function middleware(request: NextRequest) {
       url.pathname.startsWith('/register')) &&
     (jwtToken || refreshToken)
   ) {
+    request.cookies.clear();
     console.log(
       'Login veya register sayfasına erişim engellendi, jwt veya refreshToken çerezleri mevcut.'
     );

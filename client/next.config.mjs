@@ -28,6 +28,9 @@ const nextConfig = {
 
     return config;
   },
+  env: {
+    BASE_URL: process.env.BASE_URL,
+  },
 };
 
 export default nextConfig;

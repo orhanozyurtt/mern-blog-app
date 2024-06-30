@@ -1,0 +1,18 @@
+mport React from 'react';
+import { useDetailBlogMutation } from '@/redux/slice/blogApiSlice';
+interface parasType {
+  params: {
+    slug: string;
+  };
+}
+const blogDetail = ({ params }: parasType) => {
+  return (
+    <div>
+      
+      {params.slug}
+    </div>
+  );
+};
+
+export default blogDetail;
+buradaki typeScript kullanıyorum blogdetay sayfam bu useDetailBlogMutation  kullanarak detay sayfama veri çekmek istiyorum ve detay sayfasını tailwind css ile tasarlar 

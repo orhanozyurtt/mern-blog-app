@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
 import Response from './lib/Response.js'; // Hata yakalama sınıfınız
-import createRateLimiter from './middleware/createRateLimiter.js';
+// import createRateLimiter from './middleware/createRateLimiter.js';
 
 class AppClass {
   constructor() {
@@ -21,8 +21,8 @@ class AppClass {
   }
 
   middlewares() {
-    const generalLimiter = createRateLimiter(100, 15 * 60 * 1000); // Genel limiter
-    const userLimiter = createRateLimiter(5, 15 * 60 * 1000); // User rotaları için limiter const generalLimiter = createRateLimiter(100, 15 * 60 * 1000); // Genel limiter
+    // const generalLimiter = createRateLimiter(100, 15 * 60 * 1000); // Genel limiter
+    // const userLimiter = createRateLimiter(5, 15 * 60 * 1000); // User rotaları için limiter
 
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: false }));
@@ -45,8 +45,8 @@ class AppClass {
         replaceWith: '_',
       })
     );
-    this.server.use('/api/user', userLimiter);
-    this.server.use(generalLimiter);
+    // this.server.use('/api/user', userLimiter);
+    // this.server.use(generalLimiter);
   }
 
   routes() {

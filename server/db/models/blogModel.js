@@ -14,6 +14,8 @@ const blogSchema = new mongoose.Schema({
     ref: 'Category',
     required: true,
   }, // Kategori referansı
+  publishDate: { type: Date }, // Yayınlama tarihi dışarıdan alınacak şekilde eklendi
+  isPublished: { type: Boolean, default: false }, // Yayınlandı bilgisi boolean olarak eklendi
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -23,6 +25,15 @@ blogSchema.pre('save', function (next) {
     return next();
   }
   this.slug = slugify(this.title, { lower: true });
+  next();
+});
+
+blogSchema.pre('save', function (next) {
+  if (this.publishDate) {
+    this.isPublished = true;
+  } else {
+    this.isPublished = false;
+  }
   next();
 });
 

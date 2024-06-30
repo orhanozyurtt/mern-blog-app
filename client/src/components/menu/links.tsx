@@ -32,6 +32,7 @@ const Links: React.FC = () => {
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
+        performLogout();
       }
     };
     loginProcess();
@@ -57,10 +58,15 @@ const Links: React.FC = () => {
 
         <Link href={'/'}>Home Page</Link>
       </div>
+      <div className="flex items-center gap-2 cursor-pointer">
+        <IoIosHome />
+
+        <Link href={'/blog'}>All Blogs</Link>
+      </div>
       <div>
         <DropMenu
           profileLink="/profile"
-          dashboardLink="/dashboard"
+          blogLink="/blog/myBlog"
           loginLink="/login"
           registerLink="/register"
           homeLink="/"

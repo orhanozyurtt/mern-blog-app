@@ -9,10 +9,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { RiMenuFold2Fill } from 'react-icons/ri';
 import { FaUser } from 'react-icons/fa';
-
+import Link from 'next/link';
+import { link } from 'fs';
 interface Props {
   profileLink: string;
-  dashboardLink: string;
+  blogLink: string;
   loginLink: string;
   registerLink: string;
   homeLink: string;
@@ -22,7 +23,7 @@ interface Props {
 
 const DropMenu: React.FC<Props> = ({
   profileLink,
-  dashboardLink,
+  blogLink,
   loginLink,
   registerLink,
   homeLink,
@@ -34,7 +35,7 @@ const DropMenu: React.FC<Props> = ({
   };
 
   const handleDashboardClick = () => {
-    window.location.href = dashboardLink; // Dashboard linkine yönlendirme yap
+    window.location.href = blogLink; // Dashboard linkine yönlendirme yap
   };
 
   const handleLoginClick = () => {

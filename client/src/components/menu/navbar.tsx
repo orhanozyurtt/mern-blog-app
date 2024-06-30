@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import Links from '@/components/menu/links';
+import { cookies } from 'next/headers';
+import { useEffect } from 'react';
 const Navbar = () => {
   return (
     <nav className="bg-gray-800 shadow-lg">

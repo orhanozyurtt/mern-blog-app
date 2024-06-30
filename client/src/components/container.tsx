@@ -7,7 +7,7 @@ interface ContainerProps {
 }
 import { Provider } from 'react-redux';
 import { store } from '@/redux/store';
-import ContainerLay from '@/components/containerLay';
+
 const Container: React.FC<ContainerProps> = ({ children }) => {
   return (
     <Provider store={store}>
